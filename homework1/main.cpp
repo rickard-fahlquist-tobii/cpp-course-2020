@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 #include <random>
+#include <chrono>
 
 /* README
 compile -> g++-8 -std=c++17 words.cpp -lstdc++ -lstdc++fs -o a.out
@@ -40,7 +41,9 @@ public:
 
         for (string line; getline(fs_, line);)
         {
-            transform(line.begin(), line.end(), line.begin(), [](auto ch) -> auto { if (isalpha(ch)) return ch; return ' '; });
+            transform(line.begin(), line.end(), line.begin(), [](auto ch) -> auto {
+                if (isalpha(ch)) return ch; return ' ';
+            });
             auto buf  = istringstream{line};
             for (string word; buf >> word;) {
                 db_[word]++;
@@ -52,27 +55,22 @@ public:
     {
         vector<pair<string, unsigned>> freqs{db_.begin(), db_.end()};
 
-        sort(freqs.begin(), freqs.end(), [](auto lhs, auto rhs){
+        sort(freqs.begin(), freqs.end(), [](auto& lhs, auto& rhs){
             return lhs.second > rhs.second;
         });
 
         copy_n(freqs.begin(), n, back_inserter(sorted_));
-
-        for_each(sorted_.begin(), sorted_.end(), [](auto& item){
-                cout << "key, val; " << item.first << ", " << item.second << "\n";
-        });
-
     }
 
     void generate_html()
     {
         auto largest = sorted_.front().second;
-        transform(sorted_.begin(), sorted_.end(), sorted_.begin(), [largest](auto p) {
+        transform(sorted_.begin(), sorted_.end(), sorted_.begin(), [largest](auto& p) {
             return make_pair(p.first, static_cast<unsigned>((p.second * 135. / largest) + 15.));
         });
 
 
-        transform(sorted_.begin(), sorted_.end(), back_inserter(spans_), [](auto p){
+        transform(sorted_.begin(), sorted_.end(), back_inserter(spans_), [](auto& p){
             stringstream ss;
             ss << "<span style=\"font-size:" << p.second << "\">" << p.first << "</span>" << "\n";
             return ss.str();
@@ -119,9 +117,15 @@ int main(int argc, char** argv)
         return -1;
     }
     ParseFile pf(filename);
+    const auto start = std::chrono::system_clock::now();
     pf.parse();
     pf.sort_and_keep_n(10);
     pf.generate_html();
+    const auto stop = std::chrono::system_clock::now();
+    std::chrono::duration<double> diff = stop - start;
+
+
+    cout << "Duration: " << diff.count() << "s \n";
 
 
     return 0;
