@@ -43,7 +43,7 @@ public:
     }
 
     // (1)
-    void parse()
+    void parse(size_t minWordLength)
     {
 
         for (string line; getline(fs_, line);)
@@ -58,8 +58,10 @@ public:
             });
             auto buf  = istringstream{line};
             for (string word; buf >> word;) {
-                ++db_[word];
-                numWords_++;
+                if (word.length() > minWordLength) {
+                    ++db_[word];
+                    numWords_++;
+                }
             }
         }
     }
@@ -69,7 +71,7 @@ public:
     {
         vector<pair<string, unsigned>> freqs{db_.begin(), db_.end()};
 
-        sort(freqs.begin(), freqs.end(), [](auto& lhs, auto& rhs){
+        partial_sort(freqs.begin(), freqs.begin() + n, freqs.end(), [](auto& lhs, auto& rhs){
             return lhs.second > rhs.second;
         });
 
@@ -141,7 +143,7 @@ int main(int argc, char** argv)
     }
     ParseFile pf(filename);
     const auto start = std::chrono::system_clock::now();
-    pf.parse();
+    pf.parse(5);
     pf.sort_and_keep_n(50);
     pf.generate_html();
     const auto stop = std::chrono::system_clock::now();
