@@ -21,6 +21,7 @@ namespace hw2 {
                 filler.fill('*');
                 std::copy_n(std::begin(filler), N, std::begin(_data) + s.size());
             }
+            _data.back() = '\0';
         }
 
         auto value() -> std::string const {
@@ -29,7 +30,7 @@ namespace hw2 {
         }
 
     private:
-        std::array<char, N> _data;
+        std::array<char, N + 1> _data;
     };
 
     template<unsigned N>
@@ -43,10 +44,15 @@ namespace hw2 {
             if (val_string.size() < N) {
                 std::array<char, N> filler;
                 filler.fill('0');
-                std::copy_n(std::begin(val_string), N - val_string.size(), std::begin(_data) + );
+                const auto diff = N - val_string.size();
+                std::copy_n(std::begin(filler), diff, std::begin(_data));
+                std::copy_n(std::begin(val_string), val_string.size(), std::begin(_data) + diff);
+            }
+            else {
+                std::copy_n(std::begin(val_string), N, std::begin(_data));
             }
 
-            std::copy_n(std::begin(val_string), N, std::begin(_data));
+            _data.back() = '\0';
         }
 
         auto value() -> std::string const {
@@ -55,7 +61,7 @@ namespace hw2 {
         }
 
     private:
-        std::array<char, N> _data;
+        std::array<char, N + 1> _data;
     };
 
 }

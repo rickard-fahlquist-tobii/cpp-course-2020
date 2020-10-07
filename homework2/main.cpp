@@ -31,12 +31,12 @@ int main(int argc, char** argv)
 
     std::cout << omsg2 << "\n";
 
-    hw2::Number<3> numBk;
-    numBk.value(12);
+    hw2::Number<4> numBk;
+    numBk.value(23);
     std::cout << numBk.value() << "\n";
 
-    hw2::Number<3> numBk2;
-    numBk.value(987654);
+    hw2::Number<5> numBk2;
+    numBk2.value(987654);
     std::cout << numBk2.value() << "\n";
 
 
