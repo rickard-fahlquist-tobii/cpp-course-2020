@@ -12,19 +12,18 @@ namespace hw2 {
     class Text {
     public:
         constexpr void value(std::string const & s) {
-            _data.fill('\0');
 
             std::copy_n(std::begin(s), N, std::begin(_data));
 
             if (s.size() < N) {
                 std::array<char, N> filler;
                 filler.fill('*');
-                std::copy_n(std::begin(filler), N, std::begin(_data) + s.size());
+                std::copy_n(std::begin(filler), N - s.size(), std::begin(_data) + s.size());
             }
             _data.back() = '\0';
         }
 
-        auto value() -> std::string const {
+        auto value() const -> std::string {
             std::string{std::begin(_data), std::end(_data)};
             return std::string{std::begin(_data), std::end(_data)};
         }
@@ -38,8 +37,6 @@ namespace hw2 {
     public:
         void value(int value) {
             auto val_string = std::to_string(value);
-
-            _data.fill('0');
 
             if (val_string.size() < N) {
                 std::array<char, N> filler;
@@ -55,9 +52,8 @@ namespace hw2 {
             _data.back() = '\0';
         }
 
-        auto value() -> std::string const {
-            std::string out{std::begin(_data), std::end(_data)};
-            return out;
+        auto value() const -> std::string {
+            return std::string{std::begin(_data), std::end(_data)};
         }
 
     private:
